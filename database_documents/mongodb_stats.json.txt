@@ -1,0 +1,16 @@
+[
+  {
+    "menu_id": 1,
+    "menu_titre": "Menu Gastronomique de Noël",
+    "nb_commandes": 24,
+    "chiffre_affaires": 2160.00,
+    "date_mise_a_jour": "2026-06-08"
+  },
+  {
+    "menu_id": 2,
+    "menu_titre": "Buffet de Pâques",
+    "nb_commandes": 12,
+    "chiffre_affaires": 720.50,
+    "date_mise_a_jour": "2026-06-08"
+  }
+]
