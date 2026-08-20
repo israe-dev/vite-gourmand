@@ -10,7 +10,7 @@
             <p class="text-muted small">Accessible aux Utilisateurs, Employés et Administrateur.</p>
         </div>
 
-        <form action="/login" method="POST">
+       <form action="{{ route('login') }}" method="POST" novalidate>
             @csrf
             <div class="mb-3">
                 <label class="form-label small">Identifiant de connexion (Votre email)</label>
@@ -19,7 +19,7 @@
             <div class="mb-3">
                 <div class="d-flex justify-content-between">
                     <label class="form-label small">Mot de passe</label>
-                    <a href="/forgot-password" class="small text-decoration-none" style="color: var(--vert-sauge);">Oublié ?</a>
+                    <a href="{{ route('password.request') }}" class="small text-decoration-none" style="color: var(--vert-sauge); font-size: 0.8rem;">Mot de passe oublié ?</a>
                 </div>
                 <input type="password" name="password" class="form-control" required>
             </div>

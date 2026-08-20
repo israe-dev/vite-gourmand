@@ -2,9 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\User; // On utilise bien le modèle User ici
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,11 +16,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Création de ton compte Admin de test connecté à la table rôles
+        User::create([
+            'nom' => 'ADMIN',
+            'prenom' => 'Chef',
+            'email' => 'admin@viteetgourmand.fr',
+            'password' => Hash::make('Admin12345!'),
+            'telephone' => '0600000000',
+            'adresse' => '1 Rue de la Haute Cuisine, Bordeaux',
+            'statut' => true,
+            'role_id' => 1, // 1 = Admin selon ton diagramme de classes
         ]);
     }
 }
