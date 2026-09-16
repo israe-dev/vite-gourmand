@@ -6,6 +6,7 @@ use App\Http\Controllers\MainSite\AuthController;
 use App\Http\Controllers\MainSite\MenuController as PublicMenuController;
 use App\Http\Controllers\Customer\DashboardController as CustomerDashboard;
 use App\Http\Controllers\Customer\OrderController;
+use App\Http\Controllers\Customer\ReviewController;
 
 // --- PAGE D'ACCUEIL & MENUS ---
 Route::get('/', function () {
@@ -14,8 +15,6 @@ Route::get('/', function () {
 
 // Routes dynamiques pour l'affichage et le filtrage des menus (Site public)
 Route::get('/menus', [PublicMenuController::class, 'index'])->name('menus');
-
-// SEULE MODIFICATION ICI : On force l'ID à n'être que des chiffres pour qu'il arrête d'intercepter tout le reste
 Route::get('/menus/{id}', [PublicMenuController::class, 'show'])->name('menus.show')->where('id', '[0-9]+');
 
 
@@ -67,11 +66,34 @@ Route::middleware(['auth'])->group(function () {
         ->middleware(\App\Http\Middleware\CheckRole::class . ':3')
         ->name('customer.dashboard');
 
-    // Tout utilisateur connecté peut passer commande
-    Route::get('/order/create', function () {
-        return view('main-site.order');
-    })->name('order.create');
-    Route::post('/order/store', [OrderController::class, 'store'])->name('order.store');
+    // Gestion du profil utilisateur
+    Route::get('/profile/edit', function () {
+        return view('profile.edit');
+    })->name('profile.edit');
+
+    // Alias direct pour l'URL /order/create appelée depuis les fiches menus
+    Route::get('/order/create', [OrderController::class, 'create']);
+
+    // Routes client protégées par authentification
+    Route::prefix('client')->group(function () {
+
+        // Historique et création de commande
+        Route::get('/commandes', [OrderController::class, 'index'])->name('customer.orders');
+        Route::get('/commande/creer', [OrderController::class, 'create'])->name('order.create');
+        Route::post('/commande', [OrderController::class, 'store'])->name('order.store');
+        Route::post('/commandes/estimer-frais', [OrderController::class, 'estimateFee'])->name('customer.orders.estimate');
+
+        // Détail d'une commande
+        Route::get('/commandes/{id}', [OrderController::class, 'show'])->name('customer.order-details');
+
+        // Modification et annulation (autorisées seulement si statut = "en attente")
+        Route::get('/commandes/{id}/modifier', [OrderController::class, 'edit'])->name('customer.orders.edit');
+        Route::put('/commandes/{id}', [OrderController::class, 'update'])->name('customer.orders.update');
+        Route::patch('/commandes/{id}/annuler', [OrderController::class, 'cancel'])->name('customer.orders.cancel');
+
+        // Dépôt d'avis (autorisé seulement si statut = "terminée")
+        Route::post('/commandes/{id}/avis', [ReviewController::class, 'store'])->name('customer.reviews.store');
+    });
 });
 
 

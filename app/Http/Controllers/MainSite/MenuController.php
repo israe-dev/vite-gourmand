@@ -14,7 +14,7 @@ class MenuController extends Controller
      */
     public function index(Request $request)
     {
-        dd('cc');
+    
         // On récupère les thèmes pour alimenter la liste déroulante du formulaire de filtre
         $themes = Theme::all();
 

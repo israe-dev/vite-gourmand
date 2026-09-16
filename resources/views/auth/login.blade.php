@@ -1,4 +1,4 @@
-@extends('layouts.main-site')
+@extends('layouts.auth')
 
 @section('title', 'Connexion Espace Client | Vite & Gourmand')
 

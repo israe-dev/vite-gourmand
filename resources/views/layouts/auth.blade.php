@@ -3,7 +3,7 @@
 @section('title', 'Création de Compte | Vite & Gourmand')
 
 @section('content')
-<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100%; padding: 40px 20px;">
+<div style="display: flex; justify-content: center; align-items: center; min-height: 100%; padding: 40px 20px;">
     <div style="max-width: 600px; width: 100%; background-color: #fdfbf7; padding: 40px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eae5de;">
         
         <div style="text-align: center; margin-bottom: 30px;">

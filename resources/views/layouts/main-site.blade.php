@@ -54,7 +54,7 @@
         .nav-link {
             color: var(--anthracite) !important;
             font-weight: 500;
-            margin-0 10px;
+            margin: 0 10px;
             transition: color 0.3s ease;
         }
 
@@ -127,9 +127,30 @@
                     <li class="nav-item"><a class="nav-link" href="{{ url('/evenements') }}">Événements</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url('/contact') }}">Contact</a></li>
                 </ul>
-                <div class="d-flex gap-3">
-                    <a href="{{ url('/connexion') }}" class="btn btn-outline-dark me-2">Connexion</a>
-                    <a href="{{ url('/inscription') }}" class="btn btn-dark">S'inscrire</a>
+                <div class="d-flex align-items-center gap-3">
+                    @auth
+                        <div class="dropdown">
+                            <button class="btn btn-outline-dark dropdown-toggle d-flex align-items-center gap-2" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle"></i>
+                                <span>{{ Auth::user()->prenom ?? Auth::user()->nom }}</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{{ url('/mon-compte') }}"><i class="bi bi-person me-2"></i>Mon Compte</a></li>
+                                <li><a class="dropdown-item" href="{{ url('/mes-reservations') }}"><i class="bi bi-bag-check me-2"></i>Mes Commandes</a></li>
+                                <li><a class="dropdown-item" href="{{ url('/modifier-mot-de-passe') }}"><i class="bi bi-key me-2"></i>Changer le mot de passe</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right me-2"></i>Déconnexion</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    @else
+                        <a href="{{ url('/connexion') }}" class="btn btn-connexion me-2 px-3 py-2">Connexion</a>
+                        <a href="{{ url('/inscription') }}" class="btn btn-inscrire px-3 py-2">S'inscrire</a>
+                    @endauth
                 </div>
             </div>
         </div>
@@ -200,17 +221,17 @@
     <style>
         /* Style des liens textuels du footer */
         .custom-footer-link {
-            color: #D3C2B5 !important; /* Couleur sable/crème de ton image */
+            color: #D3C2B5 !important;
             text-decoration: none !important;
             font-size: 0.95rem;
             transition: color 0.2s ease-in-out;
             display: inline-block;
         }
         .custom-footer-link:hover {
-            color: #FFFDF8 !important; /* Devient blanc pur au survol */
+            color: #FFFDF8 !important;
         }
 
-        /* Style des boutons de réseaux sociaux carrés de ton image */
+        /* Style des boutons de réseaux sociaux carrés */
         .footer-social-btn {
             display: inline-flex;
             align-items: center;
