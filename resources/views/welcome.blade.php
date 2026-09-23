@@ -3,8 +3,9 @@
 @section('title', 'Accueil | Vite & Gourmand - Plats Frais et Adaptés')
 
 @section('content')
+
+<!-- Style de la page -->
 <style>
-    /* Styles spécifiques pour l'univers de la page d'accueil */
     .hero-section {
         padding: 80px 0;
         background-color: #FFFDF8;
@@ -17,7 +18,7 @@
     }
 
     .btn-hero-primary {
-        background-color: #D96C4A; /* Terracotta */
+        background-color: #D96C4A;
         color: white;
         font-weight: 600;
         padding: 14px 30px;
@@ -42,10 +43,10 @@
     .btn-hero-secondary:hover {
         background-color: #f8f9fa;
     }
- .presentation-box { background-color: var(--beige-creme); padding: 60px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
-    /* Style des cartes de service demandées (fond beige léger, coins arrondis) */
+    .presentation-box { background-color: var(--beige-creme); padding: 60px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+
     .service-card {
-        background-color: #F8F1E7 !important; /* Beige Crème */
+        background-color: #F8F1E7 !important;
         border: none !important;
         border-radius: 16px !important;
         padding: 40px 30px;
@@ -55,19 +56,17 @@
         transform: translateY(-5px);
     }
     .service-icon {
-        color: #6B8E23; /* Vert Sauge */
+        color: #6B8E23;
         font-size: 2.5rem;
     }
-</style>
-<style>
+
     :root {
-        --vert-sauge: #788475; /* À ajuster selon ton code exact */
+        --vert-sauge: #788475;
         --beige-creme: #fdfaf6;
         --marron-doux: #2c1d11;
         --orange-brand: #e06a3b;
     }
     .font-serif { font-family: 'Playfair Display', serif; }
-    .presentation-box { background-color: var(--beige-creme); padding: 60px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
     .section-title { color: var(--marron-doux); font-weight: 700; margin-bottom: 40px; }
     .menu-card { border: none; border-radius: 16px; overflow: hidden; background: #fff; transition: transform 0.3s ease, box-shadow 0.3s ease; }
     .menu-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
@@ -80,6 +79,7 @@
     .stars { color: #ffc107; }
 </style>
 
+<!-- Grand titre d'accueil et carrousel principal de présentation -->
 <section class="hero-section">
     <div class="container">
         <div class="row align-items-center g-5">
@@ -94,18 +94,46 @@
                 </div>
             </div>
             
+            <!-- images CARROUSEL TRAITEUR -->
             <div class="col-lg-6">
-                <div class="position-relative">
-                    <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=800" 
-                         alt="Plat frais et gourmand Vite et Gourmand" 
-                         class="img-fluid rounded-4 shadow-lg" 
-                         style="max-height: 500px; width: 100%; object-fit: cover;">
+                <div id="heroTraiteurCarousel" class="carousel slide shadow-lg rounded-4 overflow-hidden" data-bs-ride="carousel" data-bs-interval="4000">
+                    <div class="carousel-inner">
+                        <!-- Photo 1 : Buffet / Événement -->
+                        <div class="carousel-item active">
+                            <img src="https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&q=80&w=800" 
+                                 class="d-block w-100" 
+                                 style="height: 420px; object-fit: cover;" 
+                                 alt="Buffet traiteur événementiel">
+                        </div>
+                        <!-- Photo 2 : Cocktail / Plateaux -->
+                        <div class="carousel-item">
+                            <img src="https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?auto=format&fit=crop&q=80&w=800" 
+                                 class="d-block w-100" 
+                                 style="height: 420px; object-fit: cover;" 
+                                 alt="Cocktail et pièces salées">
+                        </div>
+                        <!-- Photo 3 : Mets raffinés / Dressage -->
+                        <div class="carousel-item">
+                            <img src="https://images.pexels.com/photos/26690289/pexels-photo-26690289.jpeg" 
+                                 class="d-block w-100" 
+                                 style="height: 420px; object-fit: cover;" 
+                                 alt="Plats cuisinés et dressés avec soin">
+                        </div>
+                    </div>
+                    
+                    <!-- Indicateurs (petits points de défilement) -->
+                    <div class="carousel-indicators">
+                        <button type="button" data-bs-target="#heroTraiteurCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                        <button type="button" data-bs-target="#heroTraiteurCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                        <button type="button" data-bs-target="#heroTraiteurCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
+<!-- Les 3 petits blocs d'avantages (livraison, sur-mesure, expérience) -->
 <section class="py-5 mb-5">
     <div class="container">
         <div class="row g-4">
@@ -141,6 +169,7 @@
     </div>
 </section>
 
+<!-- Présentation de l'entreprise -->
 <section class="presentation-box">
     <div class="container">
         <div class="row align-items-center g-5">
@@ -157,6 +186,7 @@
     </div>
 </section>
 
+<!-- Liste des 3 cartes de menus -->
 <section class="py-5 mt-4">
     <div class="container">
         <div class="text-center mb-5">
@@ -165,15 +195,16 @@
         </div>
 
         <div class="row g-4">
+            <!-- Carte 1 : Menu Terroir -->
             <div class="col-md-4">
                 <div class="card menu-card shadow-sm h-100">
                     <div id="carouselMenu1" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=500" class="d-block w-100" style="height: 250px; object-fit: cover;" alt="Plat Classique 1">
+                                <img src="https://images.pexels.com/photos/38225382/pexels-photo-38225382.jpeg" class="d-block w-100" style="height: 250px; object-fit: cover;" alt="Plat Classique 1">
                             </div>
                             <div class="carousel-item">
-                                <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&q=80&w=500" class="d-block w-100" style="height: 250px; object-fit: cover;" alt="Plat Classique 2">
+                                <img src="https://images.pexels.com/photos/25916398/pexels-photo-25916398.jpeg" class="d-block w-100" style="height: 250px; object-fit: cover;" alt="Plat Classique 2">
                             </div>
                         </div>
                         <button class="carousel-control-prev" type="button" data-bs-target="#carouselMenu1" data-bs-slide="prev">
@@ -204,15 +235,16 @@
                 </div>
             </div>
 
+            <!-- Carte 2 : Menu Végétarien -->
             <div class="col-md-4">
                 <div class="card menu-card shadow-sm h-100">
                     <div id="carouselMenu2" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80&w=500" class="d-block w-100" style="height: 250px; object-fit: cover;" alt="Plat Végétarien 1">
+                                <img src="https://images.pexels.com/photos/39388384/pexels-photo-39388384.jpeg" class="d-block w-100" style="height: 250px; object-fit: cover;" alt="Plat Végétarien 1">
                             </div>
                             <div class="carousel-item">
-                                <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=500" class="d-block w-100" style="height: 250px; object-fit: cover;" alt="Plat Végétarien 2">
+                                <img src="https://images.pexels.com/photos/18478461/pexels-photo-18478461.jpeg" class="d-block w-100" style="height: 250px; object-fit: cover;" alt="Plat Végétarien 2">
                             </div>
                         </div>
                         <button class="carousel-control-prev" type="button" data-bs-target="#carouselMenu2" data-bs-slide="prev">
@@ -243,15 +275,16 @@
                 </div>
             </div>
 
+            <!-- Carte 3 : Menu Vegan -->
             <div class="col-md-4">
                 <div class="card menu-card shadow-sm h-100">
                     <div id="carouselMenu3" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <img src="https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&q=80&w=500" class="d-block w-100" style="height: 250px; object-fit: cover;" alt="Plat Vegan 1">
+                                <img src="https://images.pexels.com/photos/36318388/pexels-photo-36318388.jpeg" class="d-block w-100" style="height: 250px; object-fit: cover;" alt="Plat Vegan 1">
                             </div>
                             <div class="carousel-item">
-                                <img src="https://images.unsplash.com/photo-1505576399279-565b52d4ac71?auto=format&fit=crop&q=80&w=500" class="d-block w-100" style="height: 250px; object-fit: cover;" alt="Plat Vegan 2">
+                                <img src="https://images.pexels.com/photos/17676350/pexels-photo-17676350.jpeg" class="d-block w-100" style="height: 250px; object-fit: cover;" alt="Plat Vegan 2">
                             </div>
                         </div>
                         <button class="carousel-control-prev" type="button" data-bs-target="#carouselMenu3" data-bs-slide="prev">
@@ -285,6 +318,7 @@
     </div>
 </section>
 
+<!-- Blocs d'engagements (produits locaux, sécurité) -->
 <section class="py-5" style="border-top: 1px solid rgba(0,0,0,0.05);">
     <div class="container">
         <div class="row align-items-center g-5 flex-row-reverse">
@@ -304,6 +338,7 @@
     </div>
 </section>
 
+<!-- Avis des clients -->
 <section class="review-box">
     <div class="container">
         <div class="text-center mb-5">

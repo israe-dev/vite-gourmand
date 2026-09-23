@@ -9,25 +9,21 @@ class DeliveryFeeService
     protected float $baseFee = 5.00;
     protected float $ratePerKm = 0.59;
     
-    // Coordonnées GPS de référence (Bordeaux Centre)
+    // Point de repère pour les coordonnées de Bordeaux Centre
     protected float $bordeauxLat = 44.837789;
     protected float $bordeauxLon = -0.579180;
 
-    /**
-     * Calcule la zone, la distance et le prix de livraison.
-     *
-     * @throws \InvalidArgumentException|\RuntimeException
-     */
+    // il calcule la zone, la distance et le prix total de la livraison
     public function calculate(string $address): array
     {
-        // Nettoyage : suppression des retours à la ligne et des espaces multiples
+        // il nettoie l'adresse pour enlever les espaces en trop ou les retours à la ligne
         $cleanAddress = trim(preg_replace('/\s+/', ' ', $address));
 
         $client = Http::when(app()->isLocal(), function ($request) {
             return $request->withoutVerifying();
         });
 
-        // 1. Géocodage de l'adresse via Nominatim
+        // Étape 1 : il récupère les coordonnées GPS de l'adresse grâce à Nominatim
         $geoResponse = $client->withHeaders([
             'User-Agent' => 'ViteEtGourmandApp/1.0 (contact@vite-et-gourmand.fr)'
         ])->get('https://nominatim.openstreetmap.org/search', [
@@ -45,7 +41,7 @@ class DeliveryFeeService
         $destLat = (float) $geoData['lat'];
         $destLon = (float) $geoData['lon'];
 
-        // 2. Détection de la commune (Bordeaux Intra-Muros)
+        // Étape 2 : il vérifie si on est bien dans Bordeaux ou son code postal
         $addressDetails = $geoData['address'] ?? [];
         $city = mb_strtolower($addressDetails['city'] ?? $addressDetails['town'] ?? $addressDetails['village'] ?? '');
         $postcode = $addressDetails['postcode'] ?? '';
@@ -60,7 +56,7 @@ class DeliveryFeeService
             ];
         }
 
-        // 3. Calcul de la distance routière via OSRM (Hors Bordeaux)
+        // Étape 3 : Si c'est hors de Bordeaux, il calcule la vraie distance routière avec OSRM
         $osrmUrl = "https://router.project-osrm.org/route/v1/driving/{$this->bordeauxLon},{$this->bordeauxLat};{$destLon},{$destLat}?overview=false";
         $osrmResponse = $client->get($osrmUrl);
 

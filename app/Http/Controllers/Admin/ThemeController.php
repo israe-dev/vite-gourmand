@@ -10,19 +10,21 @@ class ThemeController extends Controller
 {
     public function index()
     {
-        // Récupère tous les thèmes triés par nom
+        // Récupère tous les thèmes triés par ordre alphabétique
         $themes = Theme::orderBy('libelle', 'asc')->get();
         return view('admin.themes', compact('themes'));
     }
 
     public function store(Request $request)
     {
+        // Valide les données reçues (le libellé doit être unique)
         $request->validate([
             'libelle' => 'required|string|max:50|unique:themes,libelle',
         ], [
             'libelle.unique' => 'Ce thème existe déjà dans votre catalogue.',
         ]);
 
+        // Crée le nouveau thème
         Theme::create([
             'libelle' => $request->libelle
         ]);
@@ -34,8 +36,7 @@ class ThemeController extends Controller
     {
         $theme = Theme::findOrFail($id);
         
-        // Sécurité métier : On verra plus tard si on passe les menus liés à NULL 
-        // avant de supprimer, mais pour l'instant on supprime le thème proprement.
+        // Supprime le thème de la base de données
         $theme->delete();
 
         return redirect()->back()->with('success', 'Le thème a été retiré du catalogue.');

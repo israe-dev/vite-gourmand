@@ -3,6 +3,8 @@
 @section('title', 'Nos Menus | Vite & Gourmand')
 
 @section('content')
+
+<!-- Style CSS -->
 <style>
     .menu-card { border: none; border-radius: 15px; overflow: hidden; background: white; transition: transform 0.3s ease; }
     .menu-card:hover { transform: translateY(-5px); }
@@ -13,24 +15,27 @@
     .btn-details:hover { background-color: #c55a39; color: white; }
 </style>
 
+<!-- Catalogue des menus -->
 <section class="py-5 bg-light">
     <div class="container">
         
-        {{-- En-tête de la page --}}
+        <!-- Titre et sous-titre en haut de la page -->
         <div class="text-center mb-5">
             <h2 class="display-6 fw-bold" style="font-family: 'Playfair Display', serif;">Découvrez notre Carte</h2>
             <p class="text-muted">Explorez nos créations culinaires et filtrez-les selon vos envies en temps réel.</p>
         </div>
 
-        {{-- FORMULAIRE DE FILTRAGE DYNAMIQUE --}}
+        <!-- FILTRES -->
         <div class="card shadow-sm p-4 mb-5 bg-white border-0" style="border-radius: 15px;">
             <form id="filter-form" action="{{ route('menus') }}" method="GET" class="row g-3">
                 
+                <!-- Champ 1 : Recherche par mot-clé -->
                 <div class="col-md-4">
                     <label for="recherche" class="form-label fw-bold text-secondary">Rechercher un menu</label>
                     <input type="text" name="recherche" id="recherche" class="form-control" placeholder="Ex: Jardin, Éclat, Salade...">
                 </div>
 
+                <!-- Champ 2 : Sélection du thème -->
                 <div class="col-md-4">
                     <label for="theme_id" class="form-label fw-bold text-secondary">Thématique</label>
                     <select name="theme_id" id="theme_id" class="form-select">
@@ -41,6 +46,7 @@
                     </select>
                 </div>
 
+                <!-- Champ 3 : Prix maximum par personne -->
                 <div class="col-md-4">
                     <label for="prix_max" class="form-label fw-bold text-secondary">Prix max par personne</label>
                     <input type="number" name="prix_max" id="prix_max" class="form-control" placeholder="Ex: 30" min="0" step="0.5">
@@ -49,19 +55,21 @@
             </form>
         </div>
 
-        {{-- GRILLE DES MENUS (Mise à jour par JS) --}}
+        <!-- ZONE D'AFFICHAGE DES CARTES DE MENUS -->
         <div class="row g-4" id="menus-container">
-            {{-- Inclusion directe des cartes lors du premier chargement --}}
+            <!-- Chargement des cartes depuis un fichier partiel -->
             @include('partials.menu-cards')
         </div>
 
     </div>
 </section>
 
-{{-- Modal de Commande Rapide --}}
+<!-- Formulaire de commande directe -->
 <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
+            
+            <!-- En-tête de la fenêtre modale -->
             <div class="modal-header bg-light">
                 <div>
                     <h5 class="modal-title fw-bold" id="orderModalLabel">Commander : <span id="modal-menu-title" class="text-primary"></span></h5>
@@ -69,12 +77,16 @@
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
+            
+            <!-- Formulaire validation de commande -->
             <form method="POST" action="{{ route('order.store') }}">
                 @csrf
+                <!-- Champ caché recevant l'identifiant du menu -->
                 <input type="hidden" name="menu_id" id="modal_menu_id">
 
                 <div class="modal-body p-4">
                     <div class="row g-3">
+                        <!-- Infos client pré-remplies de l'utilisateur -->
                         <div class="col-md-6">
                             <label for="modal_nom" class="form-label">Nom</label>
                             <input type="text" id="modal_nom" class="form-control" value="{{ Auth::user()->nom ?? '' }}" readonly>
@@ -95,6 +107,7 @@
                             <input type="text" id="modal_telephone" class="form-control" value="{{ Auth::user()->telephone ?? '' }}" readonly>
                         </div>
 
+                        <!-- Paramètres de la commande (Personnes, Date, Heure, Adresse) -->
                         <div class="col-md-6">
                             <label for="modal_nombre_personnes" class="form-label">Nombre de personnes *</label>
                             <input type="number" name="nombre_personnes" id="modal_nombre_personnes" class="form-control" required>
@@ -122,25 +135,30 @@
                             <input type="text" name="complement_adresse" id="modal_complement_adresse" class="form-control" placeholder="Bâtiment, étage...">
                         </div>
 
+                        <!-- Récapitulatif et calcul des tarifs -->
                         <div class="col-12">
                             <div class="card p-3 bg-light border-0 mt-2">
                                 <h6 class="fw-bold mb-3"><i class="bi bi-receipt me-2"></i>Détail de la commande</h6>
 
+                                <!-- Ligne du prix brut -->
                                 <div id="modal-row-menu-raw" class="d-flex justify-content-between text-muted" style="display: none;">
                                     <span>Prix du menu (<span id="modal-summary-nb-persons">0</span> pers.)</span>
                                     <span id="modal-summary-raw-price">0,00 €</span>
                                 </div>
 
+                                <!-- Ligne de réduction grand groupe -->
                                 <div id="modal-row-discount" class="d-flex justify-content-between text-success fw-bold mt-1" style="display: none;">
                                     <span><i class="bi bi-tag-fill me-1"></i>Remise grand groupe (-10 %)</span>
                                     <span id="modal-summary-discount-amount">-0,00 €</span>
                                 </div>
 
+                                <!-- Ligne sous-total -->
                                 <div class="d-flex justify-content-between fw-bold mt-2">
                                     <span>Sous-total menu</span>
                                     <span id="modal-summary-menu-final">0,00 €</span>
                                 </div>
 
+                                <!-- Ligne frais de livraison -->
                                 <div class="d-flex justify-content-between mt-2">
                                     <span>Livraison</span>
                                     <span id="modal-summary-shipping-fee" data-value="5.00">5,00 €</span>
@@ -148,6 +166,7 @@
 
                                 <hr class="my-2">
 
+                                <!-- Total final à payer -->
                                 <div class="d-flex justify-content-between fs-5 fw-bold text-primary">
                                     <span>Total TTC</span>
                                     <span id="modal-summary-total-price">0,00 €</span>
@@ -157,6 +176,7 @@
                     </div>
                 </div>
 
+                <!-- Pied de la fenêtre modale (Boutons d'action) -->
                 <div class="modal-footer bg-light">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Continuer à comparer</button>
                     <button type="submit" class="btn btn-primary px-4">
@@ -168,7 +188,7 @@
     </div>
 </div>
 
-{{-- SCRIPT FETCH POUR LE FILTRAGE EN TEMPS RÉEL --}}
+<!-- SCRIPT 1 : Envoi des filtres de recherche sans recharger la page -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('filter-form');
@@ -197,6 +217,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<!-- SCRIPT 2 : Gestion de la fenêtre modale (Calculs des prix, remises et frais de livraison) -->
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     let currentUnitPrice = 0;
@@ -212,10 +233,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const shippingSpan = document.getElementById('modal-summary-shipping-fee');
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
 
+    // Formatage des montants en euros
     function formatEuros(val) {
         return Number(val).toFixed(2).replace('.', ',') + ' €';
     }
 
+    // Calcul automatique des sous-totaux, remises et total TTC
     function calculateModalTotals() {
         const count = parseInt(personsInput.value || 0);
         const rawMenuPrice = currentUnitPrice * count;
@@ -224,6 +247,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const rowMenuRaw = document.getElementById('modal-row-menu-raw');
         const rowDiscount = document.getElementById('modal-row-discount');
 
+        // Application de la remise si le nombre de personnes dépasse le minimum de 5 unités
         if ((count - currentMinPersons) >= 5) {
             discount = rawMenuPrice * 0.10;
             rowMenuRaw.style.setProperty('display', 'flex', 'important');
@@ -246,6 +270,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('modal-summary-total-price').textContent = formatEuros(grandTotal);
     }
 
+    // Ouverture de la fenêtre modale et récupération des données du menu sélectionné
     document.addEventListener('click', function (e) {
         const button = e.target.closest('.btn-open-order-modal');
         if (!button) return;
@@ -268,10 +293,12 @@ document.addEventListener('DOMContentLoaded', function () {
         calculateModalTotals();
     });
 
+    // Mise à jour du calcul au changement du nombre de personnes
     if (personsInput) {
         personsInput.addEventListener('input', calculateModalTotals);
     }
 
+    // Estimation dynamique des frais de livraison selon l'adresse saisie
     if (addressInput) {
         addressInput.addEventListener('change', function () {
             const address = this.value.trim();

@@ -7,12 +7,15 @@ use App\Models\Menu;
 use App\Models\Theme;
 use App\Models\Plat;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class AdminMenuController extends Controller
 {
+    /**
+     * Affiche la liste de tous les menus avec leurs thèmes et plats associés.
+     */
     public function index()
     {
-        // Récupère les menus avec leurs relations
         $menus = Menu::with(['theme', 'plats'])->get();
         $themes = Theme::all();
         $plats = Plat::all();
@@ -20,8 +23,12 @@ class AdminMenuController extends Controller
         return view('admin.menus', compact('menus', 'themes', 'plats'));
     }
 
+    /**
+     * Enregistre un nouveau menu dans la base de données après validation.
+     */
     public function store(Request $request)
     {
+        // Validation des données envoyées par le formulaire
         $request->validate([
             'titre' => 'required|string|max:100',
             'description' => 'nullable|string',
@@ -33,6 +40,7 @@ class AdminMenuController extends Controller
             'plats' => 'required|array'
         ]);
 
+        // Création du menu
         $menu = Menu::create([
             'titre' => $request->titre,
             'description' => $request->description,
@@ -43,31 +51,42 @@ class AdminMenuController extends Controller
             'theme_id' => $request->theme_id,
         ]);
 
-        // Remplit la table pivot menu_plat automatiquement
+        // Associe les plats sélectionnés au menu via la table pivot
         $menu->plats()->sync($request->plats);
 
         return redirect()->back()->with('success', 'Le menu a été configuré et associé à ses plats avec succès !');
     }
 
     /**
-     * 1. CONSULTER LE MENU ET SES COMPOSANTS
+     * Affiche le formulaire pré-rempli pour modifier un menu existant.
+     */
+    public function edit($id)
+    {
+        $menu = Menu::findOrFail($id);
+        $themes = Theme::all();
+        $plats = Plat::all();
+        
+        return view('admin.menus.edit', compact('menu', 'themes', 'plats'));
+    }
+
+    /**
+     * Retourne les détails d'un menu spécifique au format JSON (pour affichage dynamique).
      */
     public function show($id)
     {
-        // On récupère le menu avec ses plats associés (ses composants)
         $menu = Menu::with(['theme', 'plats'])->findOrFail($id);
         
-        // Si tu fais une requête AJAX/Fetch depuis ta vue pour afficher les détails dans une modale :
         return response()->json($menu);
     }
 
     /**
-     * 2. MODIFIER LE MENU
+     * Met à jour les informations d'un menu (et gère le remplacement de l'image si besoin).
      */
     public function update(Request $request, $id)
     {
         $menu = Menu::findOrFail($id);
 
+        // Validation des champs du formulaire de modification
         $request->validate([
             'titre' => 'required|string|max:100',
             'description' => 'nullable|string',
@@ -76,11 +95,12 @@ class AdminMenuController extends Controller
             'conditions' => 'nullable|string',
             'quantite_restante' => 'required|integer|min:0',
             'theme_id' => 'nullable|exists:themes,id',
-            'plats' => 'required|array'
+            'plats' => 'required|array',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
-        // Mise à jour des informations du menu
-        $menu->update([
+        // Tableau des données à mettre à jour
+        $updateData = [
             'titre' => $request->titre,
             'description' => $request->description,
             'nb_personne_minimum' => $request->nb_personne_minimum,
@@ -88,17 +108,35 @@ class AdminMenuController extends Controller
             'conditions' => $request->conditions,
             'quantite_restante' => $request->quantite_restante,
             'theme_id' => $request->theme_id,
-        ]);
+        ];
 
-        // Synchronisation des plats modifiés dans la table pivot (ajoute les nouveaux, retire ceux décochés)
+        // Gestion de l'upload d'une nouvelle photo
+        if ($request->hasFile('photo')) {
+            // Supprime l'ancienne image du serveur si elle existe
+            if ($menu->photo && Storage::disk('public')->exists($menu->photo)) {
+                Storage::disk('public')->delete($menu->photo);
+            }
+            // Enregistre la nouvelle image
+            $updateData['photo'] = $request->file('photo')->store('menus', 'public');
+        }
+
+        // Mise à jour du menu en base de données
+        $menu->update($updateData);
+
+        // Met à jour la liste des plats associés dans la table pivot
         $menu->plats()->sync($request->plats);
 
         return redirect()->back()->with('success', 'Le menu a été modifié avec succès !');
     }
 
+    /**
+     * Supprime un menu du catalogue ainsi que ses liaisons avec les plats.
+     */
     public function destroy($id)
     {
         $menu = Menu::findOrFail($id);
+        
+        // Détache tous les plats avant de supprimer le menu
         $menu->plats()->detach();
         $menu->delete();
 

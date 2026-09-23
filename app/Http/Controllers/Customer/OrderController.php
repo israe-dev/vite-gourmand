@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
+    // Affiche la liste des commandes du client connecté
     public function index()
     {
         $commandes = Commande::where('utilisateur_id', Auth::id())
@@ -21,6 +22,7 @@ class OrderController extends Controller
         return view('customer.orders', compact('commandes'));
     }
 
+    // Affiche le formulaire pour créer une nouvelle commande
     public function create(Request $request)
     {
         $menus = Menu::orderBy('titre')->get();
@@ -29,6 +31,7 @@ class OrderController extends Controller
         return view('customer.create', compact('menus', 'selectedMenuId'));
     }
 
+    // Enregistre la nouvelle commande en base de données avec gestion des stocks et paiement
     public function store(Request $request, DeliveryFeeService $deliveryService)
     {
         $validated = $request->validate([
@@ -72,16 +75,22 @@ class OrderController extends Controller
             if (($validated['nombre_personnes'] - $menu->nb_personne_minimum) >= 5) {
                 $prixMenu *= 0.90;
             }
+            $prix_menu_arrondi = round($prixMenu, 2);
+            $prix_livraison = $deliveryData['prix_livraison'];
+            $prix_materiel = 0;
+            $total = round($prix_menu_arrondi + $prix_livraison + $prix_materiel, 2);
 
-            Commande::create([
+            $commande = Commande::create([
                 'date_commande'    => now()->toDateString(),
                 'date_prestation'  => $validated['date_prestation'],
                 'heure_livraison'  => $validated['heure_livraison'],
                 'lieu_livraison'   => $adresseStockee,
                 'nombre_personnes' => $validated['nombre_personnes'],
-                'prix_menu'        => round($prixMenu, 2),
-                'prix_livraison'   => $deliveryData['prix_livraison'],
-                'prix_materiel'    => 0,
+                'prix_menu'        => $prix_menu_arrondi,
+                'prix_livraison'   => $prix_livraison,
+                'prix_materiel'    => $prix_materiel,
+                'total'            => $total,
+                'payment_status'   => 'pending',
                 'statut'           => 'en attente',
                 'utilisateur_id'   => Auth::id(),
                 'menu_id'          => $menu->id,
@@ -89,11 +98,49 @@ class OrderController extends Controller
 
             $menu->decrement('quantite_restante', $validated['nombre_personnes']);
 
+            // Initialise la session de paiement Stripe si la clé est configurée
+            if (!empty(config('services.stripe.secret'))) {
+                try {
+                    $stripeClient = new \Stripe\StripeClient(config('services.stripe.secret'));
+
+                    $successUrl = route('customer.payment.success', ['id' => $commande->id]) . '?session_id={CHECKOUT_SESSION_ID}';
+                    $cancelUrl = route('customer.payment.cancel', ['id' => $commande->id]);
+
+                    $session = $stripeClient->checkout->sessions->create([
+                        'payment_method_types' => ['card'],
+                        'mode' => 'payment',
+                        'line_items' => [[
+                            'price_data' => [
+                                'currency' => config('services.stripe.currency', 'eur'),
+                                'product_data' => ['name' => "Commande #{$commande->id}"],
+                                'unit_amount' => (int) round($total * 100),
+                            ],
+                            'quantity' => 1,
+                        ]],
+                        'client_reference_id' => (string) $commande->id,
+                        'metadata' => [
+                            'commande_id' => (string) $commande->id,
+                            'user_id' => (string) Auth::id(),
+                        ],
+                        'success_url' => $successUrl,
+                        'cancel_url' => $cancelUrl,
+                    ]);
+
+                    $commande->update(['payment_provider_id' => $session->id]);
+
+                    return redirect($session->url);
+                } catch (\Exception $e) {
+                    return redirect()->route('customer.orders')
+                        ->withErrors(['payment' => 'Erreur Stripe : ' . $e->getMessage()]);
+                }
+            }
+
             return redirect()->route('customer.orders')
                 ->with('success', 'Votre commande a été enregistrée avec succès.');
         });
     }
 
+    // Affiche le détail d'une commande spécifique
     public function show($id)
     {
         $commande = Commande::where('id', $id)
@@ -103,6 +150,7 @@ class OrderController extends Controller
         return view('customer.show', compact('commande'));
     }
 
+    // Affiche le formulaire de modification d'une commande
     public function edit($id)
     {
         $commande = Commande::where('id', $id)
@@ -119,6 +167,7 @@ class OrderController extends Controller
         return view('customer.edit', compact('commande', 'menus'));
     }
 
+    // Met à jour une commande existante et ajuste les stocks en conséquence
     public function update(Request $request, $id, DeliveryFeeService $deliveryService)
     {
         $commande = Commande::where('id', $id)
@@ -192,14 +241,20 @@ class OrderController extends Controller
                 $prixMenu *= 0.90;
             }
 
+            $prixMenu = round($prixMenu, 2);
+            $prixLivraison = (float) $deliveryData['prix_livraison'];
+            $prixMateriel = (float) ($commande->prix_materiel ?? 0);
+            $total = round($prixMenu + $prixLivraison + $prixMateriel, 2);
+
             $commande->update([
                 'menu_id'          => $newMenu->id,
                 'lieu_livraison'   => $validated['lieu_livraison'],
                 'date_prestation'  => $validated['date_prestation'],
                 'heure_livraison'  => $validated['heure_livraison'],
                 'nombre_personnes' => $validated['nombre_personnes'],
-                'prix_menu'        => round($prixMenu, 2),
-                'prix_livraison'   => $deliveryData['prix_livraison'],
+                'prix_menu'        => $prixMenu,
+                'prix_livraison'   => $prixLivraison,
+                'total'            => $total,
             ]);
 
             return redirect()->route('customer.order-details', $commande->id)
@@ -207,6 +262,7 @@ class OrderController extends Controller
         });
     }
 
+    // Annule une commande et remet les places/quantités dans le stock du menu
     public function cancel($id)
     {
         $commande = Commande::where('id', $id)
@@ -231,6 +287,7 @@ class OrderController extends Controller
             ->with('success', 'La commande a bien été annulée.');
     }
 
+    // Estime les frais de livraison en AJAX selon l'adresse saisie
     public function estimateFee(Request $request, DeliveryFeeService $deliveryService)
     {
         $request->validate([

@@ -1,19 +1,22 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+    <!-- Métadonnées et encodage de la page -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Vite & Gourmand - Traiteur Premium')</title>
     
+    <!-- Feuilles de style Bootstrap et icônes -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     
+    <!-- Polices Google Fonts (Montserrat et Playfair Display) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
     
     <style>
-        /* Intégration de ta nouvelle palette de couleurs et typographies */
+        /* Palette de couleurs du site */
         :root {
             --vert-sauge: #6B8E23;
             --beige-creme: #F8F1E7;
@@ -22,6 +25,7 @@
             --blanc-casse: #FFFDF8;
         }
 
+        /* Mise en page globale et typographie de base */
         body {
             font-family: 'Montserrat', sans-serif;
             color: var(--anthracite);
@@ -31,26 +35,30 @@
             min-height: 100vh;
         }
 
+        /* Police spécifique pour tous les titres */
         h1, h2, h3, .brand-title {
             font-family: 'Playfair Display', serif;
             font-weight: 700;
         }
 
+        /* Garde le footer en bas de page */
         main {
             flex: 1;
         }
 
-        /* Style du Header demandé */
+        /* Style de la barre de navigation (Header) */
         .navbar {
             background-color: var(--blanc-casse) !important;
             border-bottom: 1px solid rgba(37, 37, 37, 0.1);
         }
 
+        /* Logo du header */
         .navbar-brand {
             color: var(--vert-sauge) !important;
             font-size: 1.4rem;
         }
 
+        /* Liens de navigation du menu */
         .nav-link {
             color: var(--anthracite) !important;
             font-weight: 500;
@@ -58,11 +66,12 @@
             transition: color 0.3s ease;
         }
 
+        /* Effet au survol des liens du menu */
         .nav-link:hover {
             color: var(--vert-sauge) !important;
         }
 
-        /* Style des boutons Terracotta */
+        /* Bouton Connexion (contour terracotta) */
         .btn-connexion {
             color: var(--terracotta) !important;
             border: 2px solid var(--terracotta);
@@ -77,6 +86,7 @@
             color: white !important;
         }
 
+        /* Bouton Inscription */
         .btn-inscrire {
             background-color: var(--terracotta);
             color: white !important;
@@ -91,7 +101,7 @@
             border-color: #c55a39;
         }
 
-        /* Pied de page */
+        /* Style global du pied de page */
         footer {
             background-color: var(--anthracite);
             color: var(--blanc-casse);
@@ -99,6 +109,7 @@
     </style>
 </head>
 <body>
+        <!-- Message de succès -->
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ session('success') }}
@@ -106,20 +117,26 @@
             </div>
         @endif
 
+        <!-- Message d'erreur lié au compte -->
         @if($errors->has('account'))
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 {{ $errors->first('account') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
+
+    <!-- Barre de navigation principale -->
     <nav class="navbar navbar-expand-lg navbar-light py-3">
         <div class="container">
+            <!-- Logo et titre du site -->
             <a class="navbar-brand brand-title" href="{{ url('/') }}">
                 <i class="bi bi-recipe-by-media me-2"></i>Vite & Gourmand
             </a>
+            <!-- Bouton responsive pour mobile -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            <!-- Liens de navigation et espace utilisateur -->
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item"><a class="nav-link" href="{{ url('/') }}">Accueil</a></li>
@@ -128,7 +145,9 @@
                     <li class="nav-item"><a class="nav-link" href="{{ url('/contact') }}">Contact</a></li>
                 </ul>
                 <div class="d-flex align-items-center gap-3">
+                    <!-- Vérification si l'utilisateur est connecté -->
                     @auth
+                        <!-- Menu déroulant du profil utilisateur -->
                         <div class="dropdown">
                             <button class="btn btn-outline-dark dropdown-toggle d-flex align-items-center gap-2" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-person-circle"></i>
@@ -136,10 +155,11 @@
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userDropdown">
                                 <li><a class="dropdown-item" href="{{ url('/mon-compte') }}"><i class="bi bi-person me-2"></i>Mon Compte</a></li>
-                                <li><a class="dropdown-item" href="{{ url('/mes-reservations') }}"><i class="bi bi-bag-check me-2"></i>Mes Commandes</a></li>
+                                <li><a class="dropdown-item" href="{{ url('/client/commandes') }}"><i class="bi bi-bag me-2"></i>Mes Commandes</a></li>
                                 <li><a class="dropdown-item" href="{{ url('/modifier-mot-de-passe') }}"><i class="bi bi-key me-2"></i>Changer le mot de passe</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
+                                    <!-- Formulaire de déconnexion -->
                                     <form action="{{ route('logout') }}" method="POST" class="d-inline">
                                         @csrf
                                         <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right me-2"></i>Déconnexion</button>
@@ -148,6 +168,7 @@
                             </ul>
                         </div>
                     @else
+                        <!-- Boutons pour se connecter ou s'inscrire -->
                         <a href="{{ url('/connexion') }}" class="btn btn-connexion me-2 px-3 py-2">Connexion</a>
                         <a href="{{ url('/inscription') }}" class="btn btn-inscrire px-3 py-2">S'inscrire</a>
                     @endauth
@@ -156,15 +177,18 @@
         </div>
     </nav>
 
+    <!-- Contenu dynamique injecté par les vues -->
     <main>
         @yield('content')
     </main>
 
+   <!-- Pied de page (Footer) -->
    <footer class="py-5 text-start" style="background-color: #2B1E16; color: #FFFDF8; font-family: 'Montserrat', sans-serif;">
         <div class="container">
             <div class="row g-4">
                 
-             <div class="col-lg-3 col-md-6">
+               <!-- Colonne 1 : À propos et réseaux sociaux -->
+               <div class="col-lg-3 col-md-6">
                     <div class="d-flex align-items-center mb-3">
                         <a class="brand-title fs-4 fw-bold text-decoration-none" href="{{ url('/') }}" style="color: var(--vert-sauge);">
                             <i class="bi bi-recipe-by-media me-2"></i>Vite & Gourmand
@@ -181,6 +205,7 @@
                     </div>
                 </div>
 
+                <!-- Colonne 2 : Liens rapides -->
                 <div class="col-lg-3 col-md-6">
                     <h5 class="fw-bold fs-5 mb-3" style="font-family: 'Playfair Display', serif; color: #FFFDF8;">Liens Rapides</h5>
                     <ul class="list-unstyled d-flex flex-column gap-2 m-0 p-0">
@@ -191,6 +216,7 @@
                     </ul>
                 </div>
 
+                <!-- Colonne 3 : Horaires d'ouverture -->
                 <div class="col-lg-3 col-md-6">
                     <h5 class="fw-bold fs-5 mb-3" style="font-family: 'Playfair Display', serif; color: #FFFDF8;">Horaires</h5>
                     <ul class="list-unstyled d-flex flex-column gap-2 m-0 p-0 small" style="color: #D3C2B5;">
@@ -200,6 +226,7 @@
                     </ul>
                 </div>
 
+                <!-- Colonne 4 : Mentions légales -->
                 <div class="col-lg-3 col-md-6">
                     <h5 class="fw-bold fs-5 mb-3" style="font-family: 'Playfair Display', serif; color: #FFFDF8;">Mentions Légales</h5>
                   <ul class="list-unstyled">
@@ -211,6 +238,7 @@
 
             </div>
 
+            <!-- Copyright et bas de page -->
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-5 pt-4" style="border-top: 1px solid rgba(255, 253, 248, 0.1); color: #A69285; font-size: 0.85rem;">
                 <p class="mb-2 mb-md-0">&copy; {{ date('Y') }} Vite & Gourmand. Tous droits réservés.</p>
                 <p class="mb-0">Créé avec <i class="bi bi-heart-fill text-danger mx-1"></i> pour les passionnés de cuisine.</p>
@@ -219,7 +247,7 @@
     </footer>
 
     <style>
-        /* Style des liens textuels du footer */
+        /* Style spécifique pour les liens du footer */
         .custom-footer-link {
             color: #D3C2B5 !important;
             text-decoration: none !important;
@@ -231,7 +259,7 @@
             color: #FFFDF8 !important;
         }
 
-        /* Style des boutons de réseaux sociaux carrés */
+        /* Style des icônes de réseaux sociaux du footer */
         .footer-social-btn {
             display: inline-flex;
             align-items: center;
@@ -250,6 +278,7 @@
         }
     </style>
 
+    <!-- Script Bootstrap Bundle (JS + Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

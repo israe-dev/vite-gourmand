@@ -44,7 +44,7 @@
                         </a>
                     </li>
                     
-                    <!-- SECTION : GÉRER LES MENUS (Affichage fixe en cascade) -->
+                    <!-- GÉRER LES MENUS  -->
                     <li class="nav-item mt-2">
                         <span class="nav-link text-muted fw-bold pb-1" style="font-size: 0.8rem; cursor: default; background: none !important;">
                             <i class="fas fa-utensils"></i> Gérer les Menus
@@ -73,14 +73,14 @@
                         </ul>
                     </li>
 
-                    <!-- Grosse Catégorie : Gestion des Commandes -->
+                    <!-- Gestion des Commandes -->
                     <li class="nav-item mt-2">
                         <a class="nav-link {{ Request::routeIs('admin.commandes.index') ? 'active' : '' }}" href="{{ route('admin.commandes.index') }}">
                             <i class="fas fa-shopping-basket"></i> Gestion des Commandes
                         </a>
                     </li>
 
-                    <!-- Grosse Catégorie : Gestion des Avis -->
+                    <!-- Gestion des Avis -->
                     <li class="nav-item">
                         <a class="nav-link {{ Request::routeIs('admin.avis.index') ? 'active' : '' }}" href="{{ route('admin.avis.index') }}">
                             <i class="fas fa-star"></i> Gestion des Avis

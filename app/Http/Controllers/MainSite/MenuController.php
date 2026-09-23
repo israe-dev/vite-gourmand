@@ -9,29 +9,27 @@ use Illuminate\Http\Request;
 
 class MenuController extends Controller
 {
-    /**
-     * Affiche la page des menus avec les filtres
-     */
+    // Affiche le catalogue des menus avec la gestion des filtres
     public function index(Request $request)
     {
     
-        // On récupère les thèmes pour alimenter la liste déroulante du formulaire de filtre
+        // Récupère tous les thèmes pour alimenter le filtre de la vue
         $themes = Theme::all();
 
-        // On commence notre requête sans restriction pour afficher tous les menus au chargement
+        // Initialise la requête de base pour les menus
         $query = Menu::query();
 
-        // FILTRE : Par thème (si sélectionné)
+        // Filtre par thème si une option est sélectionnée
         if ($request->filled('theme_id')) {
             $query->where('theme_id', $request->theme_id);
         }
 
-        // FILTRE : Par prix maximum (si renseigné)
+        // Filtre par prix maximum si renseigné
         if ($request->filled('prix_max')) {
             $query->where('prix_par_personne', '<=', $request->prix_max);
         }
 
-        // FILTRE : Par recherche textuelle (titre ou description)
+        // Filtre par mots-clés dans le titre ou la description
         if ($request->filled('recherche')) {
             $query->where(function($q) use ($request) {
                 $q->where('titre', 'like', '%' . $request->recherche . '%')
@@ -39,26 +37,24 @@ class MenuController extends Controller
             });
         }
 
-        // On récupère les menus filtrés
+        // Récupère le résultat final des menus filtrés
         $menus = $query->get();
 
-        // Si la requête est une requête AJAX/Fetch, on renvoie uniquement du JSON
+        // Retourne une réponse JSON si c'est un appel AJAX (pour rafraîchir dynamiquement)
         if ($request->ajax()) {
             return response()->json([
                 'html' => view('partials.menu-cards', compact('menus'))->render()
             ]);
         }
 
-        // Sinon, on charge la page complète normalement
+        // Sinon, affiche la page complète normalement
         return view('main-site.menus', compact('menus', 'themes'));
     }
 
-    /**
-     * Affiche le détail d'un menu spécifique
-     */
+    // Affiche la page de détail d'un menu donné
     public function show($id)
     {
-        // On charge le menu ou on renvoie une erreur 404 s'il n'existe pas
+        // Récupère le menu ou déclenche une erreur 404 s'il n'existe pas
         $menu = Menu::findOrFail($id);
         return view('main-site.menu-detail', compact('menu'));
     }

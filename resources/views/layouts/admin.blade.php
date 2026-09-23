@@ -35,7 +35,6 @@
                     </div>
                 </div>
                 
-                <!-- LISTE DE NAVIGATION METALLIQUE FIXE SANS DEPLIANT -->
                 <ul class="nav flex-column">
                     <!-- Dashboard Principal -->
                     <li class="nav-item">
@@ -44,7 +43,7 @@
                         </a>
                     </li >
                     
-                    <!-- SECTION : GÉRER LES MENUS (Couleur corrigée pour fond sombre) -->
+                    <!-- SECTION : GÉRER LES MENUS  -->
                     <li class="nav-item mt-2">
                         <span class="nav-link fw-bold pb-1" style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.5) !important; cursor: default; background: none !important; text-transform: uppercase; letter-spacing: 0.5px;">
                             <i class="fas fa-utensils me-1"></i> Gérer les Menus
@@ -73,14 +72,14 @@
                         </ul>
                     </li>
 
-                    <!-- Grosse Catégorie : Gestion des Commandes -->
+                    <!-- Gestion des Commandes -->
                     <li class="nav-item mt-2">
                         <a class="nav-link {{ Request::routeIs('admin.commandes.index') ? 'active' : '' }}" href="{{ route('admin.commandes.index') }}">
                             <i class="fas fa-shopping-basket"></i> Gestion des Commandes
                         </a>
                     </li>
 
-                    <!-- Grosse Catégorie : Gestion des Avis -->
+                    <!-- Gestion des Avis -->
                     <li class="nav-item">
                         <a class="nav-link {{ Request::routeIs('admin.avis.index') ? 'active' : '' }}" href="{{ route('admin.avis.index') }}">
                             <i class="fas fa-star"></i> Gestion des Avis
@@ -97,12 +96,12 @@
                     <!-- Liens Externes / Déconnexion -->
                     <li class="nav-item mt-4">
                         <a class="nav-link text-info" href="{{ route('home') }}">
-                            <i class="fas fa-globe"></i> Main Website
+                            <i class="fas fa-globe"></i> accèder au site
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-danger" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            <i class="fas fa-power-off"></i> Logout
+                            <i class="fas fa-power-off"></i> Déconnexion
                         </a>
                     </li>
                 </ul>
@@ -117,9 +116,9 @@
                         <span class="badge bg-success ms-2">Espace Admin</span>
                     </div>
                     <div class="d-flex align-items-center gap-3">
-                        <span class="text-muted small"><i class="fas fa-calendar-alt me-1"></i> ECF 2026</span>
+                        <span class="text-muted small"><i class="fas fa-calendar-alt me-1"></i>2026</span>
                         <a class="text-secondary text-decoration-none small" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            <i class="fas fa-sign-out-alt"></i> Logout
+                            <i class="fas fa-sign-out-alt"></i> Déconnexion
                         </a>
                     </div>
                 </nav>

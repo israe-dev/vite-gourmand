@@ -3,11 +3,14 @@
 @section('title', 'Passer une commande — Vite & Gourmand')
 
 @section('content')
+<!-- Conteneur principal de la page de commande -->
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card shadow-sm border-0">
                 <div class="card-body p-4 p-md-5">
+                    
+                    <!-- En-tête avec titre et bouton de retour -->
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div>
                             <h1 class="h3 fw-bold text-dark mb-1">Passer une commande</h1>
@@ -18,45 +21,52 @@
                         </a>
                     </div>
 
+                    <!-- Affichage des messages d'erreur de validation globale -->
                     @if($errors->any())
                         <div class="alert alert-danger">
                             <ul class="mb-0">
-                                @foreach($errors->all() as $error)
+                                @foreach($errors->all() as$error)
                                     <li>{{ $error }}</li>
                                 @endforeach
                             </ul>
                         </div>
                     @endif
 
+                    <!-- Formulaire de soumission de commande -->
                     <form method="POST" action="{{ route('order.store') }}">
                         @csrf
 
                         <div class="row g-3">
+                            <!-- Champ Nom (lecture seule, récupéré de l'utilisateur connecté) -->
                             <div class="col-md-6">
                                 <label for="nom" class="form-label">Nom</label>
                                 <input type="text" id="nom" class="form-control" value="{{ old('nom', Auth::user()->nom ?? '') }}" readonly>
                             </div>
 
+                            <!-- Champ Prénom (lecture seule) -->
                             <div class="col-md-6">
                                 <label for="prenom" class="form-label">Prénom</label>
                                 <input type="text" id="prenom" class="form-control" value="{{ old('prenom', Auth::user()->prenom ?? '') }}" readonly>
                             </div>
 
+                            <!-- Champ Email (lecture seule) -->
                             <div class="col-md-6">
                                 <label for="email" class="form-label">Email</label>
                                 <input type="email" id="email" class="form-control" value="{{ old('email', Auth::user()->email ?? '') }}" readonly>
                             </div>
 
+                            <!-- Champ Téléphone (lecture seule) -->
                             <div class="col-md-6">
                                 <label for="telephone" class="form-label">Téléphone</label>
                                 <input type="text" id="telephone" class="form-control" value="{{ old('telephone', Auth::user()->telephone ?? '') }}" readonly>
                             </div>
 
+                            <!-- Sélection du menu avec attributs de données (prix et minimum de personnes) -->
                             <div class="col-md-6">
                                 <label for="menu_id" class="form-label">Choisir un menu</label>
                                 <select name="menu_id" id="menu_id" class="form-select" required>
                                     <option value="">Sélectionner un menu</option>
-                                    @foreach($menus as $menu)
+                                    @foreach($menus as$menu)
                                         <option
                                             value="{{ $menu->id }}"
                                             data-price="{{ $menu->prix_par_personne }}"
@@ -70,6 +80,7 @@
                                 </select>
                             </div>
 
+                            <!-- Saisie du nombre de personnes -->
                             <div class="col-md-6">
                                 <label for="nombre_personnes" class="form-label">Nombre de personnes</label>
                                 <input
@@ -84,6 +95,7 @@
                                 <small id="minimum-info" class="text-muted d-block mt-1">Sélectionnez un menu.</small>
                             </div>
 
+                            <!-- Date de la prestation -->
                             <div class="col-md-6">
                                 <label for="date_prestation" class="form-label">Date de la prestation</label>
                                 <input
@@ -96,6 +108,7 @@
                                 >
                             </div>
 
+                            <!-- Heure de livraison -->
                             <div class="col-md-6">
                                 <label for="heure_livraison" class="form-label">Heure de livraison</label>
                                 <input
@@ -108,6 +121,7 @@
                                 >
                             </div>
 
+                            <!-- Adresse de livraison -->
                             <div class="col-12">
                                 <label for="lieu_livraison" class="form-label">Adresse de livraison *</label>
                                 <textarea
@@ -120,6 +134,7 @@
                                 <div id="delivery-info" class="mt-1 text-sm"></div>
                             </div>
 
+                            <!-- Complément d'adresse optionnel -->
                             <div class="col-12">
                                 <label for="complement_adresse" class="form-label">Complément d'adresse (Bâtiment, étage...)</label>
                                 <input
@@ -131,25 +146,30 @@
                                 >
                             </div>
 
+                            <!-- Bloc récapitulatif dynamique des prix -->
                             <div class="col-12">
                                 <div class="card p-3 bg-light mt-4">
                                     <h5 class="mb-3 fw-bold">Résumé du prix</h5>
 
+                                    <!-- Ligne du prix brut du menu (affichée conditionnellement) -->
                                     <div id="row-menu-raw" class="d-flex justify-content-between text-muted" style="display: none;">
                                         <span>Prix du menu (<span id="summary-nb-persons">0</span> pers.)</span>
                                         <span id="summary-raw-price">0,00 €</span>
                                     </div>
 
+                                    <!-- Ligne de la remise grand groupe (-10%) -->
                                     <div id="row-discount" class="d-flex justify-content-between text-success fw-bold mt-1" style="display: none;">
                                         <span>Remise grand groupe (-10 %)</span>
                                         <span id="summary-discount-amount">-0,00 €</span>
                                     </div>
 
+                                    <!-- Sous-total du menu -->
                                     <div class="d-flex justify-content-between fw-bold mt-2">
                                         <span>Sous-total menu</span>
                                         <span id="summary-menu-final">0,00 €</span>
                                     </div>
 
+                                    <!-- Frais de livraison -->
                                     <div class="d-flex justify-content-between mt-2">
                                         <span>Livraison</span>
                                         <span id="summary-shipping-fee" data-value="5.00">5,00 €</span>
@@ -157,6 +177,7 @@
 
                                     <hr>
 
+                                    <!-- Prix total général de la commande -->
                                     <div class="d-flex justify-content-between fs-5 fw-bold text-primary">
                                         <span>Total</span>
                                         <span id="summary-total-price">0,00 €</span>
@@ -164,6 +185,7 @@
                                 </div>
                             </div>
 
+                            <!-- Bouton de validation du formulaire -->
                             <div class="col-12 text-end">
                                 <button type="submit" class="btn btn-primary px-4">
                                     <i class="fas fa-check-circle me-2"></i>Valider la commande
@@ -179,6 +201,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // Sélection des éléments du DOM utiles pour les calculs et requêtes AJAX
         const menuSelect = document.getElementById('menu_id');
         const personsInput = document.getElementById('nombre_personnes');
         const addressInput = document.getElementById('lieu_livraison');
@@ -187,10 +210,12 @@
         const shippingSpan = document.getElementById('summary-shipping-fee');
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
 
+        // Fonction utilitaire pour formater les montants en euros
         function formatEuros(value) {
             return Number(value).toFixed(2).replace('.', ',') + ' €';
         }
 
+        // Fonction principale de calcul des totaux et application des règles métiers (remises, minimums)
         function calculateTotals() {
             const selectedOption = menuSelect?.options[menuSelect.selectedIndex];
             if (!selectedOption) return;
@@ -209,6 +234,7 @@
             const rowMenuRaw = document.getElementById('row-menu-raw');
             const rowDiscount = document.getElementById('row-discount');
 
+            // Application d'une remise si le nombre de personnes dépasse le minimum requis d'au moins 5
             if ((count - minPersons) >= 5) {
                 discount = rawMenuPrice * 0.10;
 
@@ -236,9 +262,11 @@
             }
         }
 
+        // Écouteurs d'événements sur le changement de menu et la modification du nombre de personnes
         if (menuSelect) menuSelect.addEventListener('change', calculateTotals);
         if (personsInput) personsInput.addEventListener('input', calculateTotals);
 
+        // Gestion de l'estimation des frais de livraison via une requête AJAX lors de la saisie de l'adresse
         if (addressInput) {
             addressInput.addEventListener('change', function () {
                 const address = this.value.trim();
@@ -279,6 +307,7 @@
             });
         }
 
+        // Appel initial pour calculer les valeurs par défaut au chargement de la page
         calculateTotals();
     });
 </script>

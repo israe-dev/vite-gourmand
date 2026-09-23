@@ -42,7 +42,7 @@
             </div>
         </div>
 
-        <!-- TABLEAU D'AFFICHAGE (SANS ID) -->
+        <!-- TABLEAU D'AFFICHAGE  -->
         <div class="col-12 col-lg-8">
             <div class="card border-0 shadow-sm rounded-3">
                 <div class="card-header bg-white border-bottom py-3">

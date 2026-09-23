@@ -23,7 +23,7 @@
                     <h5 class="card-title mb-0 fw-bold text-secondary"><i class="fas fa-plus-circle me-2 text-primary"></i> Ajouter un nouveau Plat</h5>
                 </div>
                 <div class="card-body">
-                    <!-- ENCTYPE RAJOUTÉ POUR COMPRENDRE LES FICHIERS -->
+                    <!-- ENCTYPE POUR COMPRENDRE LES FICHIERS -->
                     <form action="{{ route('admin.plats.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         
@@ -44,13 +44,13 @@
                             </select>
                         </div>
 
-                        <!-- Quantité / Gestion de Stock Physique -->
+                        <!-- Quantité / Gestion de Stock -->
                         <div class="mb-3">
                             <label class="form-label fw-semibold text-muted">Quantité disponible (Stock initial)</label>
                             <input type="number" name="quantite" class="form-control" min="0" placeholder="Ex: 50" required>
                         </div>
 
-                        <!-- AJOUT : Champ Photo du plat -->
+                        <!--  Champ Photo du plat -->
                         <div class="mb-3">
                             <label class="form-label fw-semibold text-muted">Photo du plat</label>
                             <input type="file" name="photo" class="form-control" accept="image/*">

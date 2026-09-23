@@ -13,7 +13,7 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="h4 text-dark fw-bold mb-0">Gestion du Catalogue des Menus</h2>
-        <button class="btn btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#createMenuModal">
+        <button class="btn btn-primary fw-bold" onclick="resetMenuForm()" data-bs-toggle="modal" data-bs-target="#createMenuModal">
             <i class="fas fa-plus me-2"></i> Créer un nouveau menu
         </button>
     </div>
@@ -107,11 +107,22 @@
                         </td>
 
                         <td class="text-end px-4">
-                            <form action="{{ route('admin.menus.destroy', $menu->id) }}" method="POST" onsubmit="return confirm('Confirmer la suppression définitive de ce menu ?');" style="display:inline;">
+                            {{-- Bouton Voir --}}
+                            <button type="button" class="btn btn-sm btn-outline-info me-1" onclick="showMenuDetails({{ $menu->id }})" title="Voir les détails">
+                                <i class="fas fa-eye"></i>
+                            </button>
+
+                            {{-- Bouton Modifier --}}
+                            <button type="button" class="btn btn-sm btn-outline-primary me-1" onclick="editMenuInModal({{ $menu->id }})" title="Modifier" data-bs-toggle="modal" data-bs-target="#createMenuModal">
+                                <i class="fas fa-edit"></i>
+                            </button>
+
+                            {{-- Bouton Supprimer --}}
+                            <form action="{{ route('admin.menus.destroy', $menu->id) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-outline-danger btn-sm rounded-3">
-                                    <i class="fas fa-trash-alt"></i>
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer" onclick="return confirm('Êtes-vous sûr ?')">
+                                    <i class="fas fa-trash"></i>
                                 </button>
                             </form>
                         </td>
@@ -133,11 +144,13 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content border-0 shadow">
             <div class="modal-header bg-light">
-                <h5 class="modal-title fw-bold text-dark"><i class="fas fa-utensils text-primary me-2"></i> Composer un nouveau menu</h5>
+                <h5 class="modal-title fw-bold text-dark" id="modalTitle"><i class="fas fa-utensils text-primary me-2"></i> Composer un nouveau menu</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ route('admin.menus.store') }}" method="POST" enctype="multipart/form-data">
+            <form id="menuForm" action="{{ route('admin.menus.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
+                <input type="hidden" name="_method" id="methodInput" value="POST">
+                <input type="hidden" id="menuIdInput" name="menu_id" value="">
                 <div class="modal-body p-4">
                     <div class="row g-3">
                         <div class="col-md-6">
@@ -178,7 +191,8 @@
                         </div>
                         <div class="col-md-8">
                             <label class="form-label fw-semibold">Photo représentative du Menu</label>
-                            <input type="file" name="photo" class="form-control" accept="image/*" required>
+                            <input type="file" id="photoInput" name="photo" class="form-control" accept="image/*">
+                            <small class="text-muted d-block mt-1" id="photoNote">Format: JPG, PNG. Requis pour la création.</small>
                         </div>
                         <div class="col-md-4 d-flex align-items-end">
                             <div class="form-check form-switch mb-2">
@@ -213,10 +227,85 @@
                 </div>
                 <div class="modal-footer bg-light border-top-0">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-primary fw-bold"><i class="fas fa-save me-2"></i> Enregistrer le Menu</button>
+                    <button type="submit" class="btn btn-primary fw-bold" id="submitBtn"><i class="fas fa-save me-2"></i> Enregistrer le Menu</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+function resetMenuForm() {
+    // Réinitialiser le formulaire pour la création
+    document.getElementById('menuForm').reset();
+    document.getElementById('modalTitle').innerHTML = '<i class="fas fa-utensils text-primary me-2"></i> Composer un nouveau menu';
+    document.getElementById('submitBtn').innerHTML = '<i class="fas fa-save me-2"></i> Enregistrer le Menu';
+    
+    // Réinitialiser l'action vers la route store
+    document.getElementById('menuForm').action = '{{ route("admin.menus.store") }}';
+    document.getElementById('methodInput').value = 'POST';
+    document.getElementById('menuIdInput').value = '';
+    document.getElementById('photoInput').required = true;
+    document.getElementById('photoNote').textContent = 'Format: JPG, PNG. Requis pour la création.';
+    
+    // Réinitialiser les checkboxes des plats
+    document.querySelectorAll('input[name="plats[]"]').forEach(cb => cb.checked = false);
+    document.getElementById('visibilitySwitch').checked = true;
+}
+
+function editMenuInModal(menuId) {
+    // Récupérer les données du menu via AJAX
+    fetch(`{{ url('/admin/menus') }}/${menuId}`, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Remplir les champs du formulaire
+        document.getElementById('menuIdInput').value = menuId;
+        document.querySelector('input[name="titre"]').value = data.titre || '';
+        document.querySelector('input[name="prix_par_personne"]').value = data.prix_par_personne || '';
+        document.querySelector('input[name="nb_personne_minimum"]').value = data.nb_personne_minimum || 1;
+        document.querySelector('input[name="quantite_restante"]').value = data.quantite_restante || 0;
+        document.querySelector('select[name="theme_id"]').value = data.theme_id || '';
+        document.querySelector('textarea[name="description"]').value = data.description || '';
+        document.querySelector('textarea[name="conditions"]').value = data.conditions || '';
+        document.getElementById('visibilitySwitch').checked = data.is_visible !== false;
+        
+        // Sélectionner les plats associés
+        document.querySelectorAll('input[name="plats[]"]').forEach(cb => {
+            cb.checked = data.plats && data.plats.some(p => p.id == cb.value);
+        });
+        
+        // Adapter l'action du formulaire pour la modification
+        document.getElementById('menuForm').action = `{{ url('/admin/menus') }}/${menuId}`;
+        document.getElementById('methodInput').value = 'PUT';
+        document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit text-primary me-2"></i> Modifier le menu';
+        document.getElementById('submitBtn').innerHTML = '<i class="fas fa-sync me-2"></i> Mettre à jour le menu';
+        document.getElementById('photoInput').required = false;
+        document.getElementById('photoNote').textContent = 'Format: JPG, PNG. Optionnel lors de la modification.';
+    })
+    .catch(error => {
+        console.error('Erreur lors du chargement du menu:', error);
+        alert('Impossible de charger les données du menu.');
+    });
+}
+
+function showMenuDetails(menuId) {
+    // Afficher les détails du menu (déjà implémenté ou à adapter)
+    fetch(`{{ url('/admin/menus') }}/${menuId}`, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(`Menu: ${data.titre}\nPrix: ${data.prix_par_personne}€ / pers.\nStock: ${data.quantite_restante}\nPlats: ${data.plats.map(p => p.nom).join(', ')}`);
+    })
+    .catch(error => console.error('Erreur:', error));
+}
+</script>
 @endsection

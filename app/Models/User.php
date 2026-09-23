@@ -11,13 +11,10 @@ class User extends Authenticatable implements CanResetPassword
 {
     use HasFactory, Notifiable;
 
-    // On connecte explicitement le modèle à ta table en français
+    // Je dis à Laravel d'utiliser ma table "utilisateurs" en français
     protected $table = 'utilisateurs';
 
-    /**
-     * Les attributs insérables en masse (Mass Assignment)
-     * Mix parfait entre tes colonnes SQL et la sécurité pro de la référence
-     */
+    // Tous les champs que j'ai le droit de remplir
     protected $fillable = [
         'nom',
         'prenom',
@@ -25,40 +22,31 @@ class User extends Authenticatable implements CanResetPassword
         'password',
         'telephone',
         'adresse',
-        'statut',           // 1 = actif, 0 = inactif
-        'role_id',          // Clé étrangère vers la table rôles
-        'notice',           // Pour gérer les cas spécifiques (ex: "banned")
-        'activation_token', // Pour le futur mail de confirmation
+        'statut',          // 1 = actif, 0 = inactif
+        'role_id',         // Pour savoir si c'est un client, employé ou admin
+        'notice',          // Pour bloquer un compte si besoin (ex: "banned")
+        'activation_token', // Pour l'activation du compte
     ];
 
-    /**
-     * Les attributs masqués pour la sécurité (RGPD)
-     */
+    // Ce qu'on préfère cacher pour que ça ne s'affiche pas n'importe où
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Le typage automatique de Laravel (Casting)
-     */
+    // Pour que Laravel gère le mot de passe et la date tout seul
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed', // Hachage automatique ultra-sécurisé
+        'password' => 'hashed',
     ];
 
-    /**
-     * RELATION : Un utilisateur peut passer plusieurs commandes
-     * (Inspiré de customerOrders() de ta référence)
-     */
+    // Pour récupérer toutes les commandes de cet utilisateur
     public function commandes()
     {
         return $this->hasMany(Commande::class, 'utilisateur_id');
     }
 
-    /**
-     * RELATION : Un utilisateur possède un rôle (Client, Employé, Admin)
-     */
+    // Pour aller chercher à quel rôle est rattaché l'utilisateur
     public function role()
     {
         return $this->belongsTo(Role::class, 'role_id');

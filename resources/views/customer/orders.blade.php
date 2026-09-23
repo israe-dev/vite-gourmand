@@ -3,9 +3,10 @@
 @section('title', 'Mes Commandes — Vite & Gourmand')
 
 @section('content')
+<!-- Conteneur principal de l'espace client -->
 <div class="container py-5">
     
-    {{-- En-tête de l'espace client --}}
+    <!-- En-tête de l'espace client -->
     <div class="d-flex justify-content-between align-items-center pb-3 mb-4 border-bottom">
         <div>
             <h1 class="h3 fw-bold text-dark mb-1">Mon Espace Client</h1>
@@ -18,7 +19,7 @@
         </div>
     </div>
 
-    {{-- Menu de navigation interne au dashboard client (optionnel mais pratique) --}}
+    <!-- Navigation entre les onglets du profil client -->
     <ul class="nav nav-pills mb-4">
         <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="{{ route('customer.orders') }}">Mes Commandes</a>
@@ -28,7 +29,7 @@
         </li>
     </ul>
 
-    {{-- Affichage des messages de succès (ex: commande validée) --}}
+    <!-- Affichage des messages de succès -->
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
             <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
@@ -36,7 +37,7 @@
         </div>
     @endif
 
-    {{-- Contenu principal : Liste des commandes --}}
+    <!--  Liste des commandes -->
     <div class="card shadow-sm border-0">
         <div class="card-header bg-white py-3 border-0">
             <h5 class="fw-bold text-dark mb-0"><i class="fas fa-receipt text-primary me-2"></i> Historique de mes prestations</h5>
@@ -100,6 +101,7 @@
                     </table>
                 </div>
             @else
+                <!-- état vide : aucune commande trouvée -->
                 <div class="p-5 text-center">
                     <div class="mb-3">
                         <i class="fas fa-utensils fa-3x text-muted opacity-50"></i>

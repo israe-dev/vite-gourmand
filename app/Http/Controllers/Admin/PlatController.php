@@ -12,7 +12,7 @@ class PlatController extends Controller
 {
     public function index() 
     { 
-        // Optimisation de requête : On segmente directement au niveau SQL pour les onglets
+        // Récupère les plats classés par type pour l'affichage
         $entrees = Plat::with('allergenes')->where('type', 'entree')->get();
         $platsPrincipaux = Plat::with('allergenes')->where('type', 'plat')->get();
         $desserts = Plat::with('allergenes')->where('type', 'dessert')->get();
@@ -29,14 +29,13 @@ class PlatController extends Controller
             'type' => 'required|in:entree,plat,dessert',
             'description' => 'nullable|string',
             'quantite' => 'required|integer|min:0',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validation de l'image
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'allergenes' => 'nullable|array'
         ]);
 
-        // Gestion de l'upload du fichier photo
+        // Gestion de l'upload de la photo du plat
         $pathPhoto = null;
         if ($request->hasFile('photo')) {
-            // Stocke l'image dans storage/app/public/plats et récupère le chemin abrégé
             $pathPhoto = $request->file('photo')->store('plats', 'public');
         }
 
@@ -45,9 +44,10 @@ class PlatController extends Controller
             'type' => $request->type,
             'description' => $request->description,
             'quantite' => $request->quantite,
-            'photo' => $pathPhoto, // Sauvegarde du chemin en BDD
+            'photo' => $pathPhoto,
         ]);
 
+        // Associe les allergènes sélectionnés
         if ($request->has('allergenes')) {
             $plat->allergenes()->sync($request->allergenes);
         }
@@ -59,12 +59,12 @@ class PlatController extends Controller
     {
         $plat = Plat::findOrFail($id);
         
-        // Sécurité : Suppression physique du fichier image s'il existe
+        // Supprime l'image du serveur si elle existe
         if ($plat->photo && Storage::disk('public')->exists($plat->photo)) {
             Storage::disk('public')->delete($plat->photo);
         }
 
-        // Nettoyage de la table pivot avant suppression du plat
+        // Détache les allergènes et supprime le plat
         $plat->allergenes()->detach();
         $plat->delete();
 

@@ -3,11 +3,14 @@
 @section('title', 'Modifier une commande — Vite & Gourmand')
 
 @section('content')
+<!-- Conteneur principal de la page de modification -->
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card shadow-sm border-0">
                 <div class="card-body p-4 p-md-5">
+                    
+                    <!-- En-tête : Titre et bouton retour -->
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div>
                             <h1 class="h3 fw-bold text-dark mb-1">Modifier ma commande</h1>
@@ -18,6 +21,7 @@
                         </a>
                     </div>
 
+                    <!-- Gestion des erreurs de validation -->
                     @if($errors->any())
                         <div class="alert alert-danger">
                             <ul class="mb-0">
@@ -28,11 +32,13 @@
                         </div>
                     @endif
 
+                    <!-- Formulaire de modification -->
                     <form method="POST" action="{{ route('customer.orders.update', $commande->id) }}">
                         @csrf
                         @method('PUT')
 
                         <div class="row g-3">
+                            <!-- Sélection du menu -->
                             <div class="col-md-6">
                                 <label for="menu_id" class="form-label">Choisir un menu</label>
                                 <select name="menu_id" id="menu_id" class="form-select" required>
@@ -44,31 +50,37 @@
                                 </select>
                             </div>
 
+                            <!-- Nombre de personnes -->
                             <div class="col-md-6">
                                 <label for="nombre_personnes" class="form-label">Nombre de personnes</label>
                                 <input type="number" name="nombre_personnes" id="nombre_personnes" class="form-control" min="1" value="{{ old('nombre_personnes', $commande->nombre_personnes) }}" required>
                             </div>
 
+                            <!-- Date de prestation -->
                             <div class="col-md-6">
                                 <label for="date_prestation" class="form-label">Date de prestation</label>
                                 <input type="date" name="date_prestation" id="date_prestation" class="form-control" value="{{ old('date_prestation', $commande->date_prestation) }}" required>
                             </div>
 
+                            <!-- Heure de livraison -->
                             <div class="col-md-6">
                                 <label for="heure_livraison" class="form-label">Heure de livraison</label>
                                 <input type="time" name="heure_livraison" id="heure_livraison" class="form-control" value="{{ old('heure_livraison', $commande->heure_livraison) }}" required>
                             </div>
 
+                            <!-- Adresse de livraison -->
                             <div class="col-12">
                                 <label for="lieu_livraison" class="form-label">Lieu / adresse de livraison</label>
                                 <textarea name="lieu_livraison" id="lieu_livraison" class="form-control" rows="3" required>{{ old('lieu_livraison', $commande->lieu_livraison) }}</textarea>
                             </div>
 
+                            <!-- Bouton de validation -->
                             <div class="col-12 text-end">
                                 <button type="submit" class="btn btn-primary px-4">Enregistrer les modifications</button>
                             </div>
                         </div>
                     </form>
+
                 </div>
             </div>
         </div>

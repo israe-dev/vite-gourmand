@@ -3,8 +3,10 @@
 @section('title', 'Espace Administration — Vite & Gourmand')
 
 @section('content')
+<!-- Conteneur principal de l'espace administration -->
 <div class="container py-5">
     
+    <!-- En-tête de la page -->
     <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-4 border-bottom">
         <div>
             <h1 class="h2 fw-bold text-dark mb-1">Espace Administration — Vite & Gourmand</h1>
@@ -12,7 +14,9 @@
         </div>
     </div>
 
+    <!-- Section des cartes de statistiques globales (KPIs) -->
     <div class="row g-3 mb-4">
+        <!-- Carte : Commandes en attente -->
         <div class="col-12 col-sm-6 col-md-3">
             <div class="card text-white p-3 shadow-sm border-0" style="background-color: #2196F3; border-radius: 4px;">
                 <div class="d-flex justify-content-between align-items-center">
@@ -28,6 +32,7 @@
             </div>
         </div>
 
+        <!-- Carte : Commandes en ligne -->
         <div class="col-12 col-sm-6 col-md-3">
             <div class="card text-white p-3 shadow-sm border-0" style="background-color: #2ECC71; border-radius: 4px;">
                 <div class="d-flex justify-content-between align-items-center">
@@ -43,6 +48,7 @@
             </div>
         </div>
 
+        <!-- Carte : Commandes en magasin -->
         <div class="col-12 col-sm-6 col-md-3">
             <div class="card text-white p-3 shadow-sm border-0" style="background-color: #E67E22; border-radius: 4px;">
                 <div class="d-flex justify-content-between align-items-center">
@@ -58,6 +64,7 @@
             </div>
         </div>
 
+        <!-- Carte : Total des commandes -->
         <div class="col-12 col-sm-6 col-md-3">
             <div class="card text-white p-3 shadow-sm border-0" style="background-color: #E74C3C; border-radius: 4px;">
                 <div class="d-flex justify-content-between align-items-center">
@@ -74,7 +81,9 @@
         </div>
     </div>
 
+    <!-- Section des raccourcis de gestion (Menus et Employés) -->
     <div class="row g-4 mb-5">
+        <!-- Bloc Gestion des Menus -->
         <div class="col-md-6">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-body p-4">
@@ -84,6 +93,7 @@
                 </div>
             </div>
         </div>
+        <!-- Bloc Gestion des Employés -->
         <div class="col-md-6">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-body p-4">
@@ -95,6 +105,7 @@
         </div>
     </div>
 
+    <!-- Section du graphique des ventes mensuelles -->
     <div class="card shadow-sm border-0 mb-4">
         <div class="card-body p-4">
             <h5 class="card-title fw-bold text-muted mb-4">Sales Bar Chart (2026)</h5>
@@ -106,6 +117,7 @@
 
 </div>
 
+<!-- Inclusion de Chart.js et script d'initialisation du graphique -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {

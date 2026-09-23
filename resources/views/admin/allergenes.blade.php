@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container-fluid">
-    <!-- Messages de succès -->
+    <!-- Un petit message pour dire si tout s'est bien passé -->
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
@@ -12,20 +12,21 @@
         </div>
     @endif
 
-    <!-- Titre de la page d'extension -->
+    <!-- Le titre principal de notre page de configuration -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="h4 text-dark fw-bold mb-0">Configurations des Plats : Allergènes & Régimes</h2>
     </div>
 
     <div class="row g-4">
         
-        <!-- BLOC 1 : ALLERGÈNES -->
+        <!-- BLOC 1 : On gère les fichus allergènes -->
         <div class="col-12 col-xl-6">
             <div class="card border-0 shadow-sm rounded-3 mb-4">
                 <div class="card-header bg-white border-bottom py-3">
                     <h5 class="card-title mb-0 fw-bold text-secondary"><i class="fas fa-exclamation-triangle me-2 text-warning"></i> Ajouter un Allergène</h5>
                 </div>
                 <div class="card-body">
+                    <!-- Le petit formulaire d'ajout rapide -->
                     <form action="{{ route('admin.allergenes.store') }}" method="POST">
                         @csrf
                         <div class="input-group">
@@ -41,7 +42,7 @@
                 </div>
             </div>
 
-            <!-- Liste des allergènes -->
+            <!-- La liste complète de ce qu'on a déjà en base -->
             <div class="card border-0 shadow-sm rounded-3">
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -59,6 +60,7 @@
                                         <td class="fw-semibold text-dark">{{ $allergene->libelle }}</td>
                                     </tr>
                                 @empty
+                                    <!-- Si la table fait grise mine et qu'il n'y a rien -->
                                     <tr>
                                         <td colspan="2" class="text-center py-4 text-muted">Aucun allergène enregistré pour le moment.</td>
                                     </tr>
@@ -70,13 +72,14 @@
             </div>
         </div>
 
-        <!-- BLOC 2 : RÉGIMES ALIMENTAIRES -->
+        <!-- BLOC 2 : On s'occupe des régimes alimentaires -->
         <div class="col-12 col-xl-6">
             <div class="card border-0 shadow-sm rounded-3 mb-4">
                 <div class="card-header bg-white border-bottom py-3">
                     <h5 class="card-title mb-0 fw-bold text-secondary"><i class="fas fa-seedling me-2 text-success"></i> Ajouter un Régime Alimentaire</h5>
                 </div>
                 <div class="card-body">
+                    <!-- Formulaire pour enregistrer un nouveau régime -->
                     <form action="{{ route('admin.regimes.store') }}" method="POST">
                         @csrf
                         <div class="input-group">
@@ -86,13 +89,13 @@
                             </button>
                         </div>
                         @error('libelle')
-                            <div class="text-danger small mt-1">{{ $message }}</div>
+                            <div class="text-danger small mt-1">{{ $message ?></div>
                         @enderror
                     </form>
                 </div>
             </div>
 
-            <!-- Liste des régimes -->
+            <!-- Le tableau qui affiche tous les régimes existants -->
             <div class="card border-0 shadow-sm rounded-3">
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -110,6 +113,7 @@
                                         <td class="fw-semibold text-dark">{{ $regime->libelle }}</td>
                                     </tr>
                                 @empty
+                                    <!-- Au cas où la liste est vide -->
                                     <tr>
                                         <td colspan="2" class="text-center py-4 text-muted">Aucun régime enregistré pour le moment.</td>
                                     </tr>

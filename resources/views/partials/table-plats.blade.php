@@ -33,7 +33,7 @@
                         @endforelse
                     </td>
                     <td class="text-end px-4">
-                        <!-- BOUTON DETAILS MODALE (Avec data-photo inclus) -->
+                        <!-- BOUTON DETAILS MODALE  -->
                         <button type="button" class="btn btn-outline-secondary btn-sm me-1" 
                                 data-bs-toggle="modal" 
                                 data-bs-target="#detailPlatModal"

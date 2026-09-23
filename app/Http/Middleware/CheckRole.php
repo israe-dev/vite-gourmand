@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth; // Utilisation de la Façade officielle de Laravel
+use Illuminate\Support\Facades\Auth;
 
 class CheckRole
 {
@@ -18,19 +18,19 @@ class CheckRole
      */
     public function handle(Request $request, Closure $next, ...$roles)
     {
-        // 1. Vérifier si l'utilisateur est bien connecté via la Façade Auth
+        // On vérifie d'abord si l'utilisateur est connecté
         if (!Auth::check()) {
             return redirect()->route('login');
         }
 
         $user = Auth::user();
         
-        // 2. Vérifier si le role_id correspond aux rôles autorisés
+        // On regarde si son rôle fait partie de ceux autorisés
         if (in_array($user->role_id, $roles)) {
             return $next($request);
         }
 
-        // 3. Si non autorisé, redirection vers l'accueil
+        // Si l'accès est refusé, on le renvoie à l'accueil
         return redirect('/')->with('error', 'Accès non autorisé.');
     }
 }

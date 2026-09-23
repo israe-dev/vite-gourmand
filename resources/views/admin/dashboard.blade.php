@@ -3,7 +3,9 @@
 @section('title', 'Dashboard Admin — Vite & Gourmand')
 
 @section('content')
+<!-- SECTION DES STATISTIQUES : Les 4 cartes clés (commandes en attente, en ligne, sur place, total) -->
 <div class="row g-3 mb-4">
+    <!-- Carte 1 : Les commandes en attente de traitement -->
     <div class="col-12 col-sm-6 col-md-3">
         <div class="card text-white h-100 shadow-sm border-0 position-relative" style="background-color: #3b76f6; border-radius: 4px;">
             <div class="card-body p-3 pb-5">
@@ -17,6 +19,7 @@
         </div>
     </div>
 
+    <!-- Carte 2 : Les commandes passées en ligne -->
     <div class="col-12 col-sm-6 col-md-3">
         <div class="card text-white h-100 shadow-sm border-0 position-relative" style="background-color: #2ecc71; border-radius: 4px;">
             <div class="card-body p-3 pb-5">
@@ -30,6 +33,7 @@
         </div>
     </div>
 
+    <!-- Carte 3 : Les commandes en magasin / sur place -->
     <div class="col-12 col-sm-6 col-md-3">
         <div class="card text-white h-100 shadow-sm border-0 position-relative" style="background-color: #ff9f43; border-radius: 4px;">
             <div class="card-body p-3 pb-5">
@@ -43,6 +47,7 @@
         </div>
     </div>
 
+    <!-- Carte 4 : Le total de toutes les commandes confondues -->
     <div class="col-12 col-sm-6 col-md-3">
         <div class="card text-white h-100 shadow-sm border-0 position-relative" style="background-color: #ff4757; border-radius: 4px;">
             <div class="card-body p-3 pb-5">
@@ -57,10 +62,12 @@
     </div>
 </div>
 
+<!-- SECTION GRAPHIQUE : L'évolution des ventes sur l'année -->
 <div class="card border-0 shadow-sm mb-4" style="border-radius: 6px;">
     <div class="card-body p-4">
         <h5 class="card-title fw-bold text-dark mb-4" style="font-size: 1.1rem;">Sales Bar Chart (2026)</h5>
         <div style="position: relative; height: 340px; width: 100%;">
+            <!-- Le canvas où Chart.js vient dessiner le diagramme -->
             <canvas id="salesChart"></canvas>
         </div>
     </div>
@@ -70,6 +77,7 @@
 @push('scripts')
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        // Initialisation et configuration du graphique des ventes mensuelles
         const ctx = document.getElementById('salesChart').getContext('2d');
         new Chart(ctx, {
             type: 'bar',

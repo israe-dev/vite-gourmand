@@ -7,17 +7,13 @@ use Illuminate\Validation\Rules\Password;
 
 class RegisterRequest extends FormRequest
 {
-    /**
-     * Détermine si l'utilisateur est autorisé à effectuer cette requête.
-     */
+    // On autorise tout le monde à s'inscrire (accès public)
     public function authorize(): bool
     {
-        return true; // À mettre sur true pour autoriser l'inscription publique
+        return true;
     }
 
-    /**
-     * Obtenir les règles de validation applicables à la requête.
-     */
+    // Définition des règles de validation pour chaque champ du formulaire
     public function rules(): array
     {
         return [
@@ -27,21 +23,19 @@ class RegisterRequest extends FormRequest
             'adresse' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:100', 'unique:utilisateurs,email'],
             'password' => [
-                            'required',
-                            'string',
-                            'min:10',             // 10 caractères minimum
-                            'regex:/[a-z]/',      // Au moins une minuscule
-                            'regex:/[A-Z]/',      // Au moins une majuscule
-                            'regex:/[0-9]/',      // Au moins un chiffre
-                            'regex:/[@$!%*#?&]/', // Au moins un caractère spécial
-                            'confirmed'           // Doit correspondre au champ password_confirmation
-                        ],
+                        'required',
+                        'string',
+                        'min:10',            // 10 caractères minimum requis
+                        'regex:/[a-z]/',      // Doit contenir une minuscule
+                        'regex:/[A-Z]/',      // Doit contenir une majuscule
+                        'regex:/[0-9]/',      // Doit contenir un chiffre
+                        'regex:/[@$!%*#?&]/', // Doit contenir un caractère spécial
+                        'confirmed'           // Vérifie que la confirmation du mot de passe est identique
+                    ],
         ];
     }
 
-    /**
-     * Obtenir les messages d'erreur personnalisés pour les règles définies.
-     */
+    // Personnalisation des messages d'erreur en français
     public function messages(): array
     {
         return [
