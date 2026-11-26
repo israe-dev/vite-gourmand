@@ -89,7 +89,7 @@
                             </button>
                         </div>
                         @error('libelle')
-                            <div class="text-danger small mt-1">{{ $message ?></div>
+                            <div class="text-danger small mt-1">{{ $message }}</div>
                         @enderror
                     </form>
                 </div>

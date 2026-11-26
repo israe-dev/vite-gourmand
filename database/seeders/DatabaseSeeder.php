@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Création de ton compte Admin de test connecté à la table rôles
+        // Création de mon compte Admin de test connecté à la table rôles
         User::create([
             'nom' => 'ADMIN',
             'prenom' => 'Chef',
@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
             'telephone' => '0600000000',
             'adresse' => '1 Rue de la Haute Cuisine, Bordeaux',
             'statut' => true,
-            'role_id' => 1, // 1 = Admin selon ton diagramme de classes
+            'role_id' => 1, // 1 = Admin selon mon diagramme de classes
         ]);
     }
 }

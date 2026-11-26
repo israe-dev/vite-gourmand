@@ -17,7 +17,7 @@ class ThemeController extends Controller
 
     public function store(Request $request)
     {
-        // Valide les données reçues (le libellé doit être unique)
+        // Valider les données reçues /le libellé doit être uniquue
         $request->validate([
             'libelle' => 'required|string|max:50|unique:themes,libelle',
         ], [
